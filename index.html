@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>日本经济新闻 | 今日头条</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header .date {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .category-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .category-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid;
+        }
+
+        .category-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .economy .category-header {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .education .category-header {
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .policy .category-header {
+            border-color: #9b59b6;
+            color: #9b59b6;
+        }
+
+        .international .category-header {
+            border-color: #2ecc71;
+            color: #2ecc71;
+        }
+
+        .technology .category-header {
+            border-color: #f39c12;
+            color: #f39c12;
+        }
+
+        .opinion .category-header {
+            border-color: #34495e;
+            color: #34495e;
+        }
+
+        .news-item {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-left: 4px solid;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 249, 250, 0.8) 100%);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .news-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .economy .news-item {
+            border-color: #e74c3c;
+        }
+
+        .education .news-item {
+            border-color: #3498db;
+        }
+
+        .policy .news-item {
+            border-color: #9b59b6;
+        }
+
+        .international .news-item {
+            border-color: #2ecc71;
+        }
+
+        .technology .news-item {
+            border-color: #f39c12;
+        }
+
+        .opinion .news-item {
+            border-color: #34495e;
+        }
+
+        .news-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .news-summary {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #999;
+        }
+
+        .news-tag {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-elements::before,
+        .floating-elements::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-elements::before {
+            width: 200px;
+            height: 200px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .floating-elements::after {
+            width: 150px;
+            height: 150px;
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @media (max-width: 768px) {
+            .news-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .category-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements"></div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>🇯🇵 日本经济新闻</h1>
+            <div class="date">2025年6月2日 (月曜日) | 今日头条</div>
+        </div>
+
+        <div class="news-grid">
+            <!-- 经济政策 -->
+            <div class="category-section economy">
+                <div class="category-header">
+                    <div class="category-icon">📈</div>
+                    <div class="category-title">经济政策</div>
+                </div>
+                
+                <div class="news-item">
+                    <div class="news-title">「失去的30年」教训残存</div>
+                    <div class="news-summary">分析日本"失去30年"教训，强调面对特朗普政策不确定性需推进数字转型，避免重蹈覆辙实现可持续增长...</div>
+                    <div class="news-meta">
+                        <span>经济分析</span>
+                        <div class="news-tag">深度报道</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-title">初任给上涨学生冷静</div>
+                    <div class="news-summary">2026年毕业生就业活动解禁，54.1%企业计划上调初任给，但学生对企业长期发展前景仍持谨慎态度...</div>
+                    <div class="news-meta">
+                        <span>就业市场</span>
+                        <div class="news-tag">社会关注</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-title">基本工资差距"不当"判决</div>
+                    <div class="news-summary">京都地方法院判决企业正式员工与非正式员工基本工资差距不合理，可能对日本劳动法产生重大影响...</div>
+                    <div class="news-meta">
+                        <span>劳动法</span>
+                        <div class="news-tag">法律判决</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 教育社会 -->
+            <div class="category-section education">
+                <div class="category-header">
+                    <div class="category-icon">🎓</div>
+                    <div class="category-title">教育社会</div>
+                </div>
+                
+                <div class="news-item">
+                    <div class="news-title">教员不足问题恶化</div>
+                    <div class="news-summary">全国教员不足人数达2558人，约30%地方政府报告严重短缺。工作时间过长、待遇不佳导致离职率上升...</div>
+                    <div class="news-meta">
+                        <span>教育危机</span>
+                        <div class="news-tag">紧急关注</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 国际关系 -->
+            <div class="category-section international">
+                <div class="category-header">
+                    <div class="category-icon">🌍</div>
+                    <div class="category-title">国际关系</div>
+                </div>
+                
+                <div class="news-item">
+                    <div class="news-title">美中月球探测竞争加剧</div>
+                    <div class="news-summary">特朗普提出火星目标，马斯克称"月球没意思"；中国制定30年内有人月面着陆、35年内建设月面基地计划...</div>
+                    <div class="news-meta">
+                        <span>太空竞赛</span>
+                        <div class="news-tag">科技前沿</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-title">美国关税对中协商产生影响</div>
+                    <div class="news-summary">特朗普政府重新执政，美中贸易关系面临新挑战，亚太各国关注美国贸易政策变化对地区经济的影响...</div>
+                    <div class="news-meta">
+                        <span>贸易政策</span>
+                        <div class="news-tag">国际焦点</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-title">自由贸易手握守护</div>
+                    <div class="news-summary">首相石破茂强调维护自由贸易原则，推进AI和半导体等高科技领域的国际合作，应对保护主义抬头...</div>
+                    <div class="news-meta">
+                        <span>贸易政策</span>
+                        <div class="news-tag">政府声明</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-title">亚洲基础设施投资银行总裁访谈</div>
+                    <div class="news-summary">AIIB总裁金立群强调推进可持续发展，支持绿色能源和数字基础设施投资，期待氢能分野的连携合作...</div>
+                    <div class="news-meta">
+                        <span>金融合作</span>
+                        <div class="news-tag">专访报道</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 科技创新 -->
+            <div class="category-section technology">
+                <div class="category-header">
+                    <div class="category-icon">🚀</div>
+                    <div class="category-title">科技创新</div>
+                </div>
+                
+                <div class="news-item">
+                    <div class="news-title">日本ispace公司月球探测再挑战</div>
+                    <div class="news-summary">CEO袴田武史表示"不会让日本失败"，将再次挑战日本民间首次月面着陆，与NASA共同进行月之砂研究...</div>
+                    <div class="news-meta">
+                        <span>航天科技</span>
+                        <div class="news-tag">创新突破</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-title">虚拟空间设计模仿排除</div>
+                    <div class="news-summary">政府修订知财保护制度，应对元宇宙设计模仿、AI生成内容等新问题，为数字时代创新提供法律保障...</div>
+                    <div class="news-meta">
+                        <span>知识产权</span>
+                        <div class="news-tag">法规更新</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-title">数字时代国际课税改革</div>
+                    <div class="news-summary">立命馆大学教授篠田刚提出根本性改革建议，应对跨国数字企业税收挑战，建立公平的国际税收协调机制...</div>
+                    <div class="news-meta">
+                        <span>税制改革</span>
+                        <div class="news-tag">学术观点</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 政策法规 -->
+            <div class="category-section policy">
+                <div class="category-header">
+                    <div class="category-icon">⚖️</div>
+                    <div class="category-title">政策法规</div>
+                </div>
+                
+                <div class="news-item">
+                    <div class="news-title">国际税制改革与日本企业应对</div>
+                    <div class="news-summary">EY税理士法人指出OECD主导的15%全球最低税率制度已实施，日本企业需加强海外子公司管理应对挑战...</div>
+                    <div class="news-meta">
+                        <span>税务政策</span>
+                        <div class="news-tag">专业解读</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-title">约束若者统出"知中派"警惕</div>
+                    <div class="news-summary">分析"知中派"现象，强调需对中国"秘密主义高墙"保持警惕，在文化理解与国家安全间寻求平衡...</div>
+                    <div class="news-meta">
+                        <span>政策观察</span>
+                        <div class="news-tag">评论分析</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 观点评论 -->
+            <div class="category-section opinion">
+                <div class="category-header">
+                    <div class="category-icon">💭</div>
+                    <div class="category-title">观点评论</div>
+                </div>
+                
+                <div class="news-item">
+                    <div class="news-title">日经论坛"亚洲的未来"</div>
+                    <div class="news-summary">第30届会议讨论地域金融协力，朱光耀氏强调亚洲金融合作重要性，探讨日中FTA加速可能性...</div>
+                    <div class="news-meta">
+                        <span>国际论坛</span>
+                        <div class="news-tag">高端对话</div>
+                    </div>
+                </div>
+
+                <div class="news-item">
+                    <div class="news-title">春秋：文化交流与理解</div>
+                    <div class="news-summary">社论讨论中日关系中的文化交流，呼吁超越政治分歧，在人文交流、经济合作等领域寻求共同发展...</div>
+                    <div class="news-meta">
+                        <span>社论专栏</span>
+                        <div class="news-tag">文化观察</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 添加交互效果
+        document.querySelectorAll('.news-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+
+        // 添加滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.category-section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'all 0.6s ease';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
